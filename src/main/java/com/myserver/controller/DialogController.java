@@ -112,10 +112,9 @@ public class DialogController {
      *
      * @param files 文件
      * @return 成功就返回上传图片的字符串
-     * @throws JsonProcessingException 抛出异常
      */
     @PostMapping("/img")
-    public R uploadImg(@RequestParam("file") MultipartFile[] files) throws JsonProcessingException {
+    public R uploadImg(@RequestParam("file") MultipartFile[] files) {
         MultipartFile file;
         BufferedOutputStream stream;
         List<String> fileNames = new ArrayList<>();

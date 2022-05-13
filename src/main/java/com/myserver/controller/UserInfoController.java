@@ -88,21 +88,31 @@ public class UserInfoController {
         return new R(1, expInfoService.getAllExpNum(uid));
     }
 
-    @PostMapping("/avatar")
+    /**
+     * 修改用户头像和用户名
+     *
+     * @param userInfo 用户提交的修改信息
+     * @param request  获取uid
+     * @return 1 1为修改成功
+     */
+    @PostMapping("/updateinfo")
     public R uploadAvatar(UserInfoChangeDto userInfo, HttpServletRequest request) {
         Integer uid = (Integer) request.getSession().getAttribute("uid");
         if (userInfo.getAvatar() != null) {
             if (DecodeBase64Img.decode(userInfo.getAvatar(), uploadFolder + "img//avatar//", uid + ".jpg")) {
                 return new R(1, 1);
             }
-            return new R(0, 1);
+            return new R(1, 0);
         }
         if (userInfo.getUsername() != null) {
             if (registerService.checkUserName(userInfo.getUsername()) == 0) {
-                userService.changeUsername(uid,userInfo.getUsername());
+                userService.changeUsername(uid, userInfo.getUsername());
+                return new R(1, 1);
             }
+            //有重复的了直接返回报错
+            return new R(1, 0);
         }
-        return new R(1, 1);
+        return new R(0, 0);
     }
 
     /**

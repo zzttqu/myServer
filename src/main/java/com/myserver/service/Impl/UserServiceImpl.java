@@ -40,14 +40,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserInfoDto checkPassword(String userKey) {
-//        判断用户输入的是否是邮箱
-//        String pattern = "^\\w+(\\w|[.]\\w+)+@\\w+([.]\\w+){1,3}";
-//        boolean isEmail = Pattern.matches(pattern, userInfo);
-
         //简单粗暴的使用key进行寻找，有就是有，没有就是没有
         MyUser myUser = myUserMapper.getByKey(userKey);
-
-
         if (myUser == null) {
             return new UserInfoDto(
                     null, null,

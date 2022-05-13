@@ -63,25 +63,10 @@ public class MyUser {
      */
     @TableField(fill = FieldFill.INSERT)
     private Integer loginTimes;
-//    /**
-//     * 登录ip<br>
-//     * 已整合到Login表中
-//     *
-//     *
-//     */
-//    private String lastLoginIp;
     /**
      * 累计经验
      */
     private Integer exp;
     //这三个只是为了方便，不在数据库表中
-
-    /**
-     * 这个好像是用户的照片
-     * 数据库中没有该字段
-     */
-    @TableField(exist = false)
-    private String userInfo;
-    //由于likes移动到了单独列表中了，为了不新建对象，就在这里加一项
 
 }
