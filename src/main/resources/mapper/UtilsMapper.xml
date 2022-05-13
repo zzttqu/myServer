@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.myserver.Mapper.UtilsMapper">
+    <update id="updateAllUserKey">
+        update user
+        <trim prefix="set" suffixOverrides=",">
+            <trim prefix="userkey=case" suffix="end,">
+                <foreach collection="uids" index="index" item="item">
+                    when uid=#{item.uid} then #{item.password}
+                </foreach>
+            </trim>
+        </trim>
+        where uid in
+        <foreach collection="uids" item="item" separator="," open="(" close=")" index="index">
+            #{item.uid}
+        </foreach>
+    </update>
+</mapper>
