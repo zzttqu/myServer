@@ -11,16 +11,20 @@ import com.myserver.service.SendMailService;
 import com.myserver.service.UserService;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import static com.myserver.utils.UidPasswordUtils.decrypt;
 
@@ -29,14 +33,16 @@ import static com.myserver.utils.UidPasswordUtils.decrypt;
  */
 @Service
 public class UserServiceImpl implements UserService {
-    @Autowired
+    @Resource
     private MyUserMapper myUserMapper;
-    @Autowired
+    @Resource
     private SendMailService sendMailService;
-    @Autowired
+    @Resource
     private UserLikeMapper userLikeMapper;
-    @Autowired
+    @Resource
     private LoginMapper loginMapper;
+    @Resource
+    private StringRedisTemplate stringRedisTemplate;
 
     @Override
     public UserInfoDto checkPassword(String userKey) {
@@ -72,7 +78,14 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Boolean changeUsername(Integer uid, String username) {
-        return myUserMapper.updateUsername(uid, username);
+        String original = myUserMapper.selectUsernameByUid(uid);
+        if (myUserMapper.updateUsername(uid, username)) {
+            stringRedisTemplate.delete("usernameNum::" + original);
+            stringRedisTemplate.opsForValue().set("usernameNum::" + username, uid.toString(), 5, TimeUnit.MINUTES);
+            return true;
+        }
+
+        return false;
     }
     //查看是否登录+获取用户喜爱的
 //    @Override

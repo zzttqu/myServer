@@ -35,9 +35,9 @@ public class WebConfig implements WebMvcConfigurer {
     //这个是全局前置拦截器
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(loginInterceptor)
-                .addPathPatterns("/user/**")
-                .excludePathPatterns("/user/register");
+//        registry.addInterceptor(loginInterceptor)
+//                .addPathPatterns("/user/**")
+//                .excludePathPatterns("/user/register");
 //                .addPathPatterns("/**")
 //                .excludePathPatterns("/landr/**")
 //                .excludePathPatterns("/dialog")

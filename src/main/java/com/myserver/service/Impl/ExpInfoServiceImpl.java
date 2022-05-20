@@ -9,6 +9,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -23,11 +24,11 @@ import java.util.List;
  */
 @Service
 public class ExpInfoServiceImpl implements ExpInfoService {
-    @Autowired
+    @Resource
     private ExpInfoMapper expInfoMapper;
 
 
-    @Autowired
+    @Resource
     private StringRedisTemplate stringRedisTemplate;
 
     /**
@@ -117,7 +118,6 @@ public class ExpInfoServiceImpl implements ExpInfoService {
             }
         }
         list.sort(Comparator.comparing(ExpCountDto::getCause));
-
         return list;
     }
 

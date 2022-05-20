@@ -31,6 +31,9 @@ public interface MyUserMapper extends BaseMapper<MyUser> {
 
     @Update("update user set username=#{username} where uid=#{uid}")
     boolean updateUsername(Integer uid, String username);
+    //在update之前得先删除缓存
+    @Select("select uid,username from user where uid=#{uid}")
+    String selectUsernameByUid(Integer uid);
 
     //迅速查询username是否存在
     @Select("select uid,username from user where username=#{username}")
