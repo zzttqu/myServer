@@ -57,8 +57,8 @@ public class RegisterServiceImpl implements RegisterService {
         }
         if (myUserMapper.insert(myUser) == 1) {
             if (utilsMapper.updateOneUserKey(DigestUtils.sha256Hex(myUser.getUid() + myUser.getRawPassword()), myUser.getUid())) {
-                stringRedisTemplate.delete("usernameNum::" + myUser.getUsername());
-                stringRedisTemplate.delete("emailNum::" + myUser.getEmail());
+//                stringRedisTemplate.delete("usernameNum::" + myUser.getUsername());
+//                stringRedisTemplate.delete("emailNum::" + myUser.getEmail());
                 stringRedisTemplate.delete("emailCode::" + myUser.getEmail());
                 return true;
             }
@@ -79,7 +79,7 @@ public class RegisterServiceImpl implements RegisterService {
      * @return 返回该用户名是否被注册
      */
     @Override
-    @Cacheable(cacheNames = "usernameNum", key = "#username")
+//    @Cacheable(cacheNames = "usernameNum", key = "#username")
     public Integer checkUserName(String username) {
         MyUser user = myUserMapper.searchUsername(username);
         if (user == null) {
@@ -98,7 +98,7 @@ public class RegisterServiceImpl implements RegisterService {
      * @return 返回该邮箱是否被注册
      */
     @Override
-    @Cacheable(cacheNames = "emailNum", key = "#email")
+//    @Cacheable(cacheNames = "emailNum", key = "#email")
     public Integer checkUserEmail(String email) {
         MyUser user = myUserMapper.searchEmail(email);
         if (user == null) {
