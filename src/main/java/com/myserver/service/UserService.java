@@ -13,5 +13,7 @@ public interface UserService {
 
     Boolean changeUsername(Integer uid, String username);
 
+    Boolean changeAvatar(Integer uid,String base64Str);
+
     Boolean getUserLogin(Integer uid);
 }

@@ -7,7 +7,7 @@ import com.myserver.service.ExpInfoService;
 import com.myserver.service.RegisterService;
 import com.myserver.service.SignInService;
 import com.myserver.service.UserService;
-import com.myserver.utils.DecodeBase64Img;
+import com.myserver.utils.Base64Img;
 import com.myserver.utils.R;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -98,15 +98,11 @@ public class UserInfoController {
     public R uploadAvatar(@RequestBody UserInfoChangeDto userInfo, HttpServletRequest request) {
         Integer uid = (Integer) request.getSession().getAttribute("uid");
         if (userInfo.getAvatar() != null && !userInfo.getAvatar().equals("")) {
-            if (DecodeBase64Img.decode(userInfo.getAvatar(), uploadFolder + "img//avatar//", uid + ".jpg")) {
-                return new R(1, 1);
-            }
-            return new R(1, 0);
+            return new R(1, userService.changeAvatar(uid, userInfo.getAvatar()) ? 1 : 0);
         }
         if (userInfo.getUsername() != null && !userInfo.getUsername().equals("")) {
             if (registerService.checkUserName(userInfo.getUsername()) == 0) {
-                Boolean aBoolean = userService.changeUsername(uid, userInfo.getUsername());
-                return new R(1, 1);
+                return new R(1, userService.changeUsername(uid, userInfo.getUsername()) ? 1 : 0);
             }
             //有重复的了直接返回报错
             return new R(1, 0);

@@ -45,8 +45,6 @@ public class MyUser {
     /**
      * 上次登录日期<br>
      * 已整合到Login表中
-     *
-     *
      */
     @TableField(fill = FieldFill.INSERT)
     private LocalDateTime lastLoginTime;
@@ -58,8 +56,6 @@ public class MyUser {
     /**
      * 登录次数<br>
      * 已整合到Login表中
-     *
-     *
      */
     @TableField(fill = FieldFill.INSERT)
     private Integer loginTimes;
@@ -67,6 +63,9 @@ public class MyUser {
      * 累计经验
      */
     private Integer exp;
-    //这三个只是为了方便，不在数据库表中
+    /**
+     * 头像id
+     */
+    private Integer avatar;
 
 }

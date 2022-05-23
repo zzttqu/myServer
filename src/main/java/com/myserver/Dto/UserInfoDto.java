@@ -34,6 +34,8 @@ public class UserInfoDto {
      */
     private Integer status;
 
+    private String avatar;
+
 
     public UserInfoDto(String username, Integer uid, Integer status) {
         this.username = username;

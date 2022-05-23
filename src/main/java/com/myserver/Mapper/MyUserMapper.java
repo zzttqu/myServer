@@ -14,8 +14,8 @@ public interface MyUserMapper extends BaseMapper<MyUser> {
     @Select("select uid,username,email,userkey,status from user where username=#{username}")
     MyUser getByUsername(String username);
 
-    //使用邮箱登录
-    @Select("select uid,username,userkey,status from user where userkey=#{userKey}")
+    //验证用户密码
+    @Select("select uid,username,userkey,status,avatar from user where userkey=#{userKey}")
     MyUser getByKey(String userKey);
 
     //更新用户登录数据
@@ -29,8 +29,12 @@ public interface MyUserMapper extends BaseMapper<MyUser> {
     @Update("update user set userkey=#{userKey} where uid=#{uid}")
     boolean updateUserKey(Integer uid, String userKey);
 
+    @Update("update user set avatar=#{avatar} where uid=#{uid}")
+    Integer updateUserAvatar(Integer avatar, Integer uid);
+
     @Update("update user set username=#{username} where uid=#{uid}")
     boolean updateUsername(Integer uid, String username);
+
     //在update之前得先删除缓存
     @Select("select uid,username from user where uid=#{uid}")
     String selectUsernameByUid(Integer uid);

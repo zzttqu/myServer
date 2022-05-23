@@ -1,16 +1,18 @@
 package com.myserver.service.Impl;
 
 
+import com.myserver.Dao.Avatar;
 import com.myserver.Dao.Login;
 import com.myserver.Dto.UserInfoDto;
+import com.myserver.Mapper.AvatarMapper;
 import com.myserver.Mapper.LoginMapper;
 import com.myserver.Mapper.MyUserMapper;
 import com.myserver.Mapper.UserLikeMapper;
 import com.myserver.Dao.MyUser;
 import com.myserver.service.SendMailService;
 import com.myserver.service.UserService;
+import com.myserver.utils.Base64Img;
 import org.apache.commons.codec.digest.DigestUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -21,7 +23,6 @@ import javax.crypto.NoSuchPaddingException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -42,7 +43,10 @@ public class UserServiceImpl implements UserService {
     @Resource
     private LoginMapper loginMapper;
     @Resource
+    private AvatarMapper avatarMapper;
+    @Resource
     private StringRedisTemplate stringRedisTemplate;
+
 
     @Override
     public UserInfoDto checkPassword(String userKey) {
@@ -51,13 +55,14 @@ public class UserServiceImpl implements UserService {
         if (myUser == null) {
             return new UserInfoDto(
                     null, null,
-                    null, 0);
+                    null, 0, null);
         }
-
+        Avatar avatar = avatarMapper.selectById(myUser.getAvatar());
+        String base64str = Base64Img.encode(avatar.getAvatar());
         return new UserInfoDto(
                 myUser.getUsername(),
                 myUser.getUid(),
-                userLikeMapper.getUserLikeByUid(myUser.getUid()), myUser.getStatus());
+                userLikeMapper.getUserLikeByUid(myUser.getUid()), myUser.getStatus(), base64str);
     }
 
     //更新用户登录信息
@@ -116,6 +121,14 @@ public class UserServiceImpl implements UserService {
         return true;
     }
 
+    @Override
+    public Boolean changeAvatar(Integer uid, String base64Str) {
+        Avatar avatar = new Avatar();
+        avatar.setUid(uid);
+        avatar.setAvatar(Base64Img.decode(base64Str));
+        avatarMapper.insert(avatar);
+        return myUserMapper.updateUserAvatar(avatar.getId(), uid) == 1;
+    }
 
     /**
      * 看看有没有新功能判断用户上次登录和更新的时间

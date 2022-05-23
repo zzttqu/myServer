@@ -6,7 +6,6 @@ import com.myserver.Dto.UserInfoCheckDto;
 import com.myserver.Dto.UserInfoDto;
 import com.myserver.Pojo.EmailCode;
 import com.myserver.config.myannotation.AccessLimit;
-import com.myserver.utils.DecodeBase64Img;
 import com.myserver.utils.R;
 import com.myserver.Dao.MyUser;
 import com.myserver.service.RegisterService;
@@ -39,8 +38,6 @@ public class LoginRegController {
     private RegisterService registerService;
     @Autowired
     private SendMailService sendMailService;
-    @Value("${file.uploadFolder}")
-    private String uploadFolder;
 
     /**
      * 基本功能检查username和email是否重复
@@ -86,7 +83,7 @@ public class LoginRegController {
      * @return 登录是否成功 boolean
      */
     @PostMapping("/login")
-    public R login(@RequestBody LoginDto loginDto, HttpServletRequest request) throws JsonProcessingException {
+    public R login(@RequestBody LoginDto loginDto, HttpServletRequest request){
         String userKey = loginDto.getInfo();
         String ip = request.getHeader("x-real_ip");
         UserInfoDto sqlUser = userService.checkPassword(userKey);
