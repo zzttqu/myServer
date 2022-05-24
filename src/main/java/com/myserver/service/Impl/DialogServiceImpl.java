@@ -1,15 +1,22 @@
 package com.myserver.service.Impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.myserver.Dao.ImgInfo;
 import com.myserver.Mapper.DialogMapper;
+import com.myserver.Mapper.ImgInfoMapper;
 import com.myserver.Mapper.UserLikeMapper;
 import com.myserver.Dao.Dialog;
 import com.myserver.Dao.UserLike;
 import com.myserver.service.DialogService;
-import org.springframework.beans.factory.annotation.Autowired;
+import net.coobird.thumbnailator.Thumbnails;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.Resource;
+import java.io.*;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * 类型：Service
@@ -22,10 +29,14 @@ import java.util.List;
  */
 @Service
 public class DialogServiceImpl implements DialogService {
-    @Autowired
+    @Resource
     private DialogMapper dialogMapper;
-    @Autowired
+    @Resource
     private UserLikeMapper userLikeMapper;
+    @Resource
+    private ImgInfoMapper imgInfoMapper;
+    @Value("${file.uploadFolder}")
+    private String uploadFolder;
 
     /**
      * 点赞操作调用了{@link UserLikeMapper}
@@ -68,6 +79,7 @@ public class DialogServiceImpl implements DialogService {
     public Boolean createDialog(Dialog dialog) {
         //设置默认状态为标准
         dialog.setStatus(0);
+        dialog.setLikes(0);
         return dialogMapper.insert(dialog) == 1;
     }
 
@@ -79,7 +91,39 @@ public class DialogServiceImpl implements DialogService {
      */
     @Override
     public List<Dialog> getDialogs(Integer num) {
-//        dialogDao.selectByPage(num);
-        return dialogMapper.selectByPage(num);
+        List<Dialog> dialogs = dialogMapper.selectByPage(num);
+        for (Dialog d : dialogs) {
+            String[] imgIds = d.getImg().split(",");
+            for (String s : imgIds) {
+                d.setImg(imgInfoMapper.selectById(Integer.parseInt(s)).getPath());
+            }
+        }
+        return dialogs;
+    }
+
+    @Override
+    public Integer createImage(MultipartFile img) throws IOException {
+        byte[] raw = img.getBytes();
+        ByteArrayInputStream in = new ByteArrayInputStream(raw);
+        String suffix = img.getOriginalFilename().substring(img.getOriginalFilename().lastIndexOf(".") + 1);
+        String fileName = UUID.randomUUID() + "." + suffix;
+        String rawFileName = "raw_" + fileName;
+        String thumbFileName = "thumb_" + fileName;
+        File file = new File(uploadFolder + "img\\imgs\\raw\\" + rawFileName);
+        FileOutputStream fos = new FileOutputStream(file);
+        fos.write(raw);
+        fos.close();
+        Thumbnails.of(in)
+                .size(400, 400)
+                .outputQuality(0.8)
+                .toFile(uploadFolder + "img\\imgs\\raw\\" + thumbFileName);
+//                .asBufferedImage();
+//        ByteArrayOutputStream out = new ByteArrayOutputStream();
+//        ImageIO.write(thumbBufferedImage, "jpg", out);
+//        byte[] thumb = out.toByteArray();
+        ImgInfo imgInfo = new ImgInfo();
+        imgInfo.setPath(fileName);
+        imgInfoMapper.insert(imgInfo);
+        return imgInfo.getId();
     }
 }

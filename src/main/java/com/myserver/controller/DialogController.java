@@ -1,6 +1,5 @@
 package com.myserver.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.myserver.Dao.Dialog;
 import com.myserver.Dao.ExpInfo;
 import com.myserver.config.myannotation.AccessLimit;
@@ -10,19 +9,15 @@ import com.myserver.utils.R;
 import com.myserver.Dao.UserLike;
 import com.myserver.service.DialogService;
 import lombok.extern.slf4j.Slf4j;
-import net.coobird.thumbnailator.Thumbnails;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.io.BufferedOutputStream;
-import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * 类型：Controller
@@ -39,8 +34,7 @@ public class DialogController {
     private DialogService dialogService;
     @Autowired
     private ExpInfoService expInfoService;
-    @Value("${file.uploadFolder}")
-    private String uploadFolder;
+
 
     /**
      * 获取dialog信息
@@ -115,29 +109,15 @@ public class DialogController {
      */
     @PostMapping("/img")
     public R uploadImg(@RequestParam("file") MultipartFile[] files) {
-        MultipartFile file;
-        BufferedOutputStream stream;
-        List<String> fileNames = new ArrayList<>();
+        List<Integer> imgList = new ArrayList<>();
         if (files.length == 0) {
             return new R(0, "empty");
         }
         for (MultipartFile multipartFile : files) {
-            file = multipartFile;
-            if (!file.isEmpty()) {
+
+            if (!multipartFile.isEmpty()) {
                 try {
-                    String suffix = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf(".") + 1);
-                    String fileName = UUID.randomUUID() + "." + suffix;
-                    String rawFileName = "raw_" + fileName;
-                    String thumbFileName = "thumb_" + fileName;
-                    fileNames.add(fileName);
-                    byte[] bytes = file.getBytes();
-                    stream = new BufferedOutputStream(new FileOutputStream(uploadFolder + "img//imgs//raw//" + rawFileName));
-                    stream.write(bytes);
-                    stream.close();
-                    Thumbnails.of(uploadFolder + "img//imgs//raw//" + rawFileName)
-                            .scale(0.5)
-                            .outputQuality(0.5)
-                            .toFile(uploadFolder + "img//imgs//thumb//" + thumbFileName);
+                    imgList.add(dialogService.createImage(multipartFile));
                 } catch (Exception e) {
                     return new R(0, "error");
                 }
@@ -146,7 +126,7 @@ public class DialogController {
                 return new R(0, "empty");
             }
         }
-        //这里不用转json字符串
-        return new R(1, fileNames);
+        //这里传回去对应的图片id
+        return new R(1, imgList);
     }
 }

@@ -1,11 +1,9 @@
 package com.myserver.service;
 
-import com.myserver.Dto.SignInDto;
-
-import java.util.List;
+import com.myserver.utils.R;
 
 public interface SignInService {
     Integer signIn(Integer uid);
 
-    List<SignInDto> signInList(Integer uid);
+    R signInList(Integer uid);
 }

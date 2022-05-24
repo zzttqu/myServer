@@ -6,6 +6,7 @@ import com.myserver.Dto.SignInDto;
 import com.myserver.Mapper.ExpInfoMapper;
 import com.myserver.Mapper.SignInMapper;
 import com.myserver.service.SignInService;
+import com.myserver.utils.R;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -100,9 +101,10 @@ public class SignInServiceImpl implements SignInService {
      */
     //签到列表
     @Override
-    public List<SignInDto> signInList(Integer uid) {
+    public R signInList(Integer uid) {
         SignIn signIn = signInMapper.selectByUid(uid);
         List<SignInDto> list = new ArrayList<>(7);
+        long daysDiff=1;
         if (null == signIn) {
             //没有签过到
             for (int i = 1; i < 8; i++) {
@@ -112,13 +114,13 @@ public class SignInServiceImpl implements SignInService {
         else {
             LocalDate signInTime = signIn.getDateTime().toLocalDate();
             LocalDate currTime = LocalDate.now();
-            long daysDiff = ChronoUnit.DAYS.between(signInTime, currTime);
+            daysDiff = ChronoUnit.DAYS.between(signInTime, currTime);
             Integer continueDays;
             if (daysDiff > 1) {
                 // 1, 超过一天, 把返回到前端的签到的天数重置为0，后端等签到时候看就行了。
                 // 设置定时任务吧，一天一次
-                // signIn.setContinueDays(0);
-                // sigInDao.updateById(signIn);
+//                 signIn.setContinueDays(0);
+//                 signInMapper.updateById(signIn);
                 continueDays = 0;
             }
             else {
@@ -127,8 +129,6 @@ public class SignInServiceImpl implements SignInService {
             //只要签过到了，但是不到7天都是这样
             if (continueDays <= 6) {
                 //这个是奖励部分
-
-                //
                 for (int i = 1; i < 8; i++) {
                     if (i <= continueDays) {
                         list.add(new SignInDto(i, 1));
@@ -150,7 +150,7 @@ public class SignInServiceImpl implements SignInService {
                 }
             }
         }
-        return list;
+        return new R(Math.toIntExact(daysDiff),list);
     }
 
 }

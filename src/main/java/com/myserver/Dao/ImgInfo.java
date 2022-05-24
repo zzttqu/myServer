@@ -8,19 +8,13 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 @Data
-@TableName(value = "avatar")
+@TableName(value = "images")
 @NoArgsConstructor
 @AllArgsConstructor
-public class Avatar {
+public class ImgInfo {
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
-    private Integer uid;
-    private byte[] avatar;
+    private String path;
     @TableField(fill = FieldFill.INSERT)
     private LocalDateTime dateTime;
-
-    public Avatar(Integer uid, byte[] avatar) {
-        this.uid = uid;
-        this.avatar = avatar;
-    }
 }
