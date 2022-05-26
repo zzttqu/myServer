@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.myserver.Dao.Post;
 import com.myserver.Dao.Login;
 import com.myserver.Dao.MyUser;
-import com.myserver.Mapper.DialogMapper;
+import com.myserver.Mapper.PostsMapper;
 import com.myserver.Mapper.LoginMapper;
 import com.myserver.Mapper.MyUserMapper;
 import com.myserver.Dto.ChangeStatusDto;
@@ -22,7 +22,7 @@ public class AdminServiceImpl implements AdminService {
     @Resource
     LoginMapper loginMapper;
     @Resource
-    DialogMapper dialogMapper;
+    PostsMapper postsMapper;
 
     @Override
     public Boolean checkUserStatus(String username) {
@@ -58,11 +58,11 @@ public class AdminServiceImpl implements AdminService {
         Page<Post> page = new Page<>(pageNum, 5);
         QueryWrapper<Post> queryWrapper = new QueryWrapper<>();
         queryWrapper.select().orderByDesc("dateTime");
-        return dialogMapper.selectPage(page, queryWrapper).getRecords();
+        return postsMapper.selectPage(page, queryWrapper).getRecords();
     }
 
     @Override
     public Boolean changeDialogInfo(ChangeStatusDto changeStatusDto) {
-        return dialogMapper.updateDialogStatus(changeStatusDto.getId(), changeStatusDto.getStatus());
+        return postsMapper.updateStatus(changeStatusDto.getId(), changeStatusDto.getStatus());
     }
 }

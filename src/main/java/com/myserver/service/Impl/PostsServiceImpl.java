@@ -3,11 +3,11 @@ package com.myserver.service.Impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.myserver.Dao.ImgInfo;
 import com.myserver.Dao.Post;
-import com.myserver.Mapper.DialogMapper;
+import com.myserver.Mapper.PostsMapper;
 import com.myserver.Mapper.ImgInfoMapper;
 import com.myserver.Mapper.UserLikeMapper;
 import com.myserver.Dao.UserLike;
-import com.myserver.service.DialogService;
+import com.myserver.service.PostService;
 import net.coobird.thumbnailator.Thumbnails;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -23,14 +23,14 @@ import java.util.UUID;
  * 作用：dialog服务层
  *
  * @author 张天奕
- * @see DialogService
- * @see DialogMapper
+ * @see PostService
+ * @see PostsMapper
  * @see UserLikeMapper
  */
 @Service
-public class DialogServiceImpl implements DialogService {
+public class PostsServiceImpl implements PostService {
     @Resource
-    private DialogMapper dialogMapper;
+    private PostsMapper postsMapper;
     @Resource
     private UserLikeMapper userLikeMapper;
     @Resource
@@ -80,7 +80,7 @@ public class DialogServiceImpl implements DialogService {
         //设置默认状态为标准
         post.setStatus(0);
         post.setLikes(0);
-        return dialogMapper.insert(post) == 1;
+        return postsMapper.insert(post) == 1;
     }
 
     /**
@@ -91,7 +91,8 @@ public class DialogServiceImpl implements DialogService {
      */
     @Override
     public List<Post> getDialogs(Integer num) {
-        List<Post> dialogs = dialogMapper.selectByPage(num);
+
+        List<Post> dialogs = postsMapper.selectByPage(num);
         for (Post d : dialogs) {
             String[] imgIds = d.getImg().split(",");
             for (String s : imgIds) {

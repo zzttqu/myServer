@@ -1,9 +1,6 @@
 package com.myserver.config;
 
-import com.myserver.Dao.MyUser;
 import com.myserver.Dao.SignIn;
-import com.myserver.Mapper.ExpInfoMapper;
-import com.myserver.Mapper.MyUserMapper;
 import com.myserver.Mapper.SignInMapper;
 import com.myserver.Mapper.UserLikeMapper;
 import com.myserver.utils.UidPasswordUtils;
@@ -32,7 +29,7 @@ public class ScheduleTask {
     //每30s执行一次
     @Scheduled(cron = "0/30 * * * * ? ")
     private void updateDialogLikes() {
-        if (userLikeMapper.updateDialogLike()) {
+        if (userLikeMapper.updatePostLike()) {
         }
         else {
             log.info("Dialog likes fail to update");

@@ -1,10 +1,9 @@
 package com.myserver.service.Impl;
 
+import com.myserver.Dao.ExpCount;
 import com.myserver.Dao.ExpInfo;
-import com.myserver.Dto.ExpCountDto;
 import com.myserver.Mapper.ExpInfoMapper;
 import com.myserver.service.ExpInfoService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
@@ -41,7 +40,7 @@ public class ExpInfoServiceImpl implements ExpInfoService {
     @Cacheable(value = "exp")
     @Override
     public Integer getUserTotalExp(Integer uid) {
-        return expInfoMapper.getOneTotal(uid);
+        return expInfoMapper.getTotal(uid);
     }
 
     /**
@@ -72,15 +71,13 @@ public class ExpInfoServiceImpl implements ExpInfoService {
             if (expInfo.getCause() == i) {
                 if (count > limit[i]) {
                     return count;
-                }
-                else {
+                } else {
                     //这步才是写入数据
                     if (expInfoMapper.insert(expInfo) == 1) {
-                        stringRedisTemplate.delete("count::SimpleKey [" + expInfo.getUid() + "," + expInfo.getCause() + "]");
-                        stringRedisTemplate.delete("exp::" + expInfo.getUid());
+//                        stringRedisTemplate.delete("count::SimpleKey [" + expInfo.getUid() + "," + expInfo.getCause() + "]");
+//                        stringRedisTemplate.delete("exp::" + expInfo.getUid());
                         return count + 1;
-                    }
-                    else {
+                    } else {
                         return count;
                     }
                 }
@@ -95,29 +92,22 @@ public class ExpInfoServiceImpl implements ExpInfoService {
      * 获取该用户所有项目的经验值
      *
      * @param uid 该用户uid
-     * @return {@link ExpCountDto} 的列表
+     * @return {@link ExpCount} 的列表
      */
     @Override
-    public List<ExpCountDto> getAllExpNum(Integer uid) {
-        List<ExpCountDto> expCountList = expInfoMapper.expList(uid);
-        List<ExpCountDto> list = new ArrayList<>();
+    public List<ExpCount> getAllExpNum(Integer uid) {
+        List<ExpCount> expCountList = expInfoMapper.expList(uid);
+        expCountList.sort(Comparator.comparing(ExpCount::getCause));
+        List<ExpCount> list = new ArrayList<>();
         //这里是有几种cause
         for (int i = 0; i < 2; i++) {
-            list.add(new ExpCountDto(i, 0));
-        }
-        if (expCountList.size() == 0) {
-            return list;
-        }
-        else {
-            for (ExpCountDto count : expCountList) {
-                for (ExpCountDto countDto : list) {
-                    if (count.getCause().equals(countDto.getCause())) {
-                        countDto.setCount(count.getCount());
-                    }
-                }
+            ExpCount countDto = expCountList.get(i);
+            if (countDto == null) {
+                list.add(new ExpCount(i, 0));
+            } else if (countDto.getCause() == i) {
+                list.add(new ExpCount(i, countDto.getCause()));
             }
         }
-        list.sort(Comparator.comparing(ExpCountDto::getCause));
         return list;
     }
 

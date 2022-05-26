@@ -1,13 +1,11 @@
 package com.myserver.controller;
 
-import com.myserver.Dto.ExpCountDto;
-import com.myserver.Dto.ExpInfoDto;
+import com.myserver.Dao.ExpCount;
 import com.myserver.Dto.UserInfoChangeDto;
 import com.myserver.service.ExpInfoService;
 import com.myserver.service.RegisterService;
 import com.myserver.service.SignInService;
 import com.myserver.service.UserService;
-import com.myserver.utils.Base64Img;
 import com.myserver.utils.R;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -52,12 +50,7 @@ public class UserInfoController {
         Integer uid = (Integer) request.getSession().getAttribute("uid");
         Integer exp = signInService.signIn(uid);
         if (exp != 0) {
-            if (expInfoService.updateUserTotalExp(uid) == 1) {
-                return new R(1, exp);
-            }
-            else {
-                return new R(1, 0);
-            }
+            return new R(1, 1);
         }
         return new R(1, 0);
     }
@@ -121,12 +114,11 @@ public class UserInfoController {
     public R expInfo(HttpServletRequest request) {
         Integer uid = (Integer) request.getSession().getAttribute("uid");
         Integer exp = expInfoService.getUserTotalExp(uid);
-        List<ExpCountDto> allExpNum = expInfoService.getAllExpNum(uid);
+        List<ExpCount> allExpNum = expInfoService.getAllExpNum(uid);
         if ((exp == null) || (exp == -1)) {
-            return new R(1, new ExpInfoDto(0, allExpNum));
-        }
-        else {
-            return new R(1, new ExpInfoDto(exp, allExpNum));
+            return new R(1, new R(0, allExpNum));
+        } else {
+            return new R(1, new R(exp, allExpNum));
         }
     }
 }

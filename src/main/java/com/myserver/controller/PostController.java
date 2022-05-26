@@ -4,10 +4,11 @@ import com.myserver.Dao.Post;
 import com.myserver.Dao.ExpInfo;
 import com.myserver.config.myannotation.AccessLimit;
 import com.myserver.service.ExpInfoService;
+import com.myserver.service.Impl.PostsServiceImpl;
 import com.myserver.utils.IpGetter;
 import com.myserver.utils.R;
 import com.myserver.Dao.UserLike;
-import com.myserver.service.DialogService;
+import com.myserver.service.PostService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -24,14 +25,14 @@ import java.util.List;
  * 作用：对话相关操作的api
  *
  * @author 张天奕
- * @see com.myserver.service.Impl.DialogServiceImpl 服务层实现类
+ * @see PostsServiceImpl 服务层实现类
  */
 @Slf4j
 @RestController
 @RequestMapping("/post")
-public class DialogController {
+public class PostController {
     @Autowired
-    private DialogService dialogService;
+    private PostService postService;
     @Autowired
     private ExpInfoService expInfoService;
 
@@ -54,7 +55,7 @@ public class DialogController {
                 return new R(1, 0);
             }
         }
-        return new R(1, dialogService.getDialogs(number));
+        return new R(1, postService.getDialogs(number));
     }
 
     /**
@@ -69,7 +70,7 @@ public class DialogController {
         HttpSession session = request.getSession();
         Integer uid = (Integer) session.getAttribute("uid");
         UserLike userLike = new UserLike(uid, id);
-        if (dialogService.likeDialogs(userLike)) {
+        if (postService.likeDialogs(userLike)) {
             Integer count = expInfoService.newExpInfo(new ExpInfo(uid, 1));
             return new R(1, count);
         }
@@ -96,7 +97,7 @@ public class DialogController {
         Integer uid = (Integer) session.getAttribute("uid");
         post.setUid(uid);
         post.setUsername(username);
-        dialogService.createDialog(post);
+        postService.createDialog(post);
         Integer count = expInfoService.newExpInfo(new ExpInfo(uid, 0));
         return new R(1, count);
     }
@@ -117,7 +118,7 @@ public class DialogController {
 
             if (!multipartFile.isEmpty()) {
                 try {
-                    imgList.add(dialogService.createImage(multipartFile));
+                    imgList.add(postService.createImage(multipartFile));
                 } catch (Exception e) {
                     return new R(0, "error");
                 }

@@ -1,9 +1,7 @@
 package com.myserver.service;
 
+import com.myserver.Dao.ExpCount;
 import com.myserver.Dao.ExpInfo;
-import com.myserver.Dto.ExpCountDto;
-import org.apache.ibatis.annotations.Update;
-
 import java.util.List;
 
 public interface ExpInfoService {
@@ -11,7 +9,7 @@ public interface ExpInfoService {
     Integer newExpInfo(ExpInfo expInfo);
 
     //查询该用户当日所有项目条目
-    List<ExpCountDto> getAllExpNum(Integer uid);
+    List<ExpCount> getAllExpNum(Integer uid);
 
     //查询该用户该项当日条数
     Integer getExpNum(Integer uid, Integer cause);

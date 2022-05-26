@@ -10,6 +10,7 @@ import com.myserver.utils.R;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -27,9 +28,9 @@ import java.util.List;
  */
 @Service
 public class SignInServiceImpl implements SignInService {
-    @Autowired
+    @Resource
     private SignInMapper signInMapper;
-    @Autowired
+    @Resource
     private ExpInfoMapper expInfoMapper;
 
     /**
