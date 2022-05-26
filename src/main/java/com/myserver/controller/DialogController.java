@@ -1,6 +1,6 @@
 package com.myserver.controller;
 
-import com.myserver.Dao.Dialog;
+import com.myserver.Dao.Post;
 import com.myserver.Dao.ExpInfo;
 import com.myserver.config.myannotation.AccessLimit;
 import com.myserver.service.ExpInfoService;
@@ -28,7 +28,7 @@ import java.util.List;
  */
 @Slf4j
 @RestController
-@RequestMapping("/dialog")
+@RequestMapping("/post")
 public class DialogController {
     @Autowired
     private DialogService dialogService;
@@ -81,22 +81,22 @@ public class DialogController {
     /**
      * 创建dialog
      *
-     * @param dialog  Dialog对象{@link Dialog}
+     * @param post  Dialog对象{@link Post}
      * @param request 需要session中的uid和username
      * @return 发帖返回此次点赞获得的exp，未登录返回失败
-     * @see Dialog
+     * @see Post
      */
     @PostMapping("/create")
-    public R createNewDialogs(@RequestBody Dialog dialog, HttpServletRequest request) {
+    public R createNewDialogs(@RequestBody Post post, HttpServletRequest request) {
         HttpSession session = request.getSession();
         String username = (String) session.getAttribute("username");
         if (username == null) {
             return new R(0, 0);
         }
         Integer uid = (Integer) session.getAttribute("uid");
-        dialog.setUid(uid);
-        dialog.setUsername(username);
-        dialogService.createDialog(dialog);
+        post.setUid(uid);
+        post.setUsername(username);
+        dialogService.createDialog(post);
         Integer count = expInfoService.newExpInfo(new ExpInfo(uid, 0));
         return new R(1, count);
     }

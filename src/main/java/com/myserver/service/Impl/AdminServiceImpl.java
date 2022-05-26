@@ -2,7 +2,7 @@ package com.myserver.service.Impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.myserver.Dao.Dialog;
+import com.myserver.Dao.Post;
 import com.myserver.Dao.Login;
 import com.myserver.Dao.MyUser;
 import com.myserver.Mapper.DialogMapper;
@@ -54,9 +54,9 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public List<Dialog> getAllDialog(Integer pageNum) {
-        Page<Dialog> page = new Page<>(pageNum, 5);
-        QueryWrapper<Dialog> queryWrapper = new QueryWrapper<>();
+    public List<Post> getAllDialog(Integer pageNum) {
+        Page<Post> page = new Page<>(pageNum, 5);
+        QueryWrapper<Post> queryWrapper = new QueryWrapper<>();
         queryWrapper.select().orderByDesc("dateTime");
         return dialogMapper.selectPage(page, queryWrapper).getRecords();
     }

@@ -2,10 +2,10 @@ package com.myserver.service.Impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.myserver.Dao.ImgInfo;
+import com.myserver.Dao.Post;
 import com.myserver.Mapper.DialogMapper;
 import com.myserver.Mapper.ImgInfoMapper;
 import com.myserver.Mapper.UserLikeMapper;
-import com.myserver.Dao.Dialog;
 import com.myserver.Dao.UserLike;
 import com.myserver.service.DialogService;
 import net.coobird.thumbnailator.Thumbnails;
@@ -72,15 +72,15 @@ public class DialogServiceImpl implements DialogService {
     /**
      * 创建dialog操作调用了{@link UserLikeMapper}
      *
-     * @param dialog {@link Dialog}
+     * @param post {@link Post}
      * @return 返回是否创建成功dialog
      */
     @Override
-    public Boolean createDialog(Dialog dialog) {
+    public Boolean createDialog(Post post) {
         //设置默认状态为标准
-        dialog.setStatus(0);
-        dialog.setLikes(0);
-        return dialogMapper.insert(dialog) == 1;
+        post.setStatus(0);
+        post.setLikes(0);
+        return dialogMapper.insert(post) == 1;
     }
 
     /**
@@ -90,9 +90,9 @@ public class DialogServiceImpl implements DialogService {
      * @return 返回部分dialog
      */
     @Override
-    public List<Dialog> getDialogs(Integer num) {
-        List<Dialog> dialogs = dialogMapper.selectByPage(num);
-        for (Dialog d : dialogs) {
+    public List<Post> getDialogs(Integer num) {
+        List<Post> dialogs = dialogMapper.selectByPage(num);
+        for (Post d : dialogs) {
             String[] imgIds = d.getImg().split(",");
             for (String s : imgIds) {
                 d.setImg(imgInfoMapper.selectById(Integer.parseInt(s)).getPath());

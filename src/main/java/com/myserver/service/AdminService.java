@@ -1,6 +1,6 @@
 package com.myserver.service;
 
-import com.myserver.Dao.Dialog;
+import com.myserver.Dao.Post;
 import com.myserver.Dao.Login;
 import com.myserver.Dao.MyUser;
 import com.myserver.Dto.ChangeStatusDto;
@@ -14,7 +14,7 @@ public interface AdminService {
 
     Boolean changeUserInfo(ChangeStatusDto changeStatusDto);
 
-    List<Dialog> getAllDialog(Integer pageNum);
+    List<Post> getAllDialog(Integer pageNum);
 
     Boolean changeDialogInfo(ChangeStatusDto changeStatusDto);
 
