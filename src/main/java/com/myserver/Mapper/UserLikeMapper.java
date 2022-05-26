@@ -24,7 +24,7 @@ public interface UserLikeMapper extends BaseMapper<UserLike> {
             "c on posts.id=c.id SET posts.likes=c.count")
     Boolean updatePostLike();
     @Update("update userlike set status=0 where uid=#{uid} and id=#{id}")
-    Boolean like(Integer id,Integer uid);
+    Integer like(Integer id,Integer uid);
     @Update("update userlike set status=1 where uid=#{uid} and id=#{id}")
     Integer unlike(Integer uid,Integer id);
 

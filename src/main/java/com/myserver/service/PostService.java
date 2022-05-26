@@ -8,11 +8,11 @@ import java.io.IOException;
 import java.util.List;
 
 public interface PostService {
-    List<Post> getDialogs(Integer num);
+    List<Post> getPosts(Integer num);
 
-    Boolean likeDialogs(UserLike userLike);
+    Boolean likePost(UserLike userLike);
 
-    Boolean createDialog(Post post);
+    Boolean createPost(Post post);
 
     Integer createImage(MultipartFile img) throws IOException;
 }

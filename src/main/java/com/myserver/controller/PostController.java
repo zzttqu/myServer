@@ -55,7 +55,7 @@ public class PostController {
                 return new R(1, 0);
             }
         }
-        return new R(1, postService.getDialogs(number));
+        return new R(1, postService.getPosts(number));
     }
 
     /**
@@ -70,7 +70,7 @@ public class PostController {
         HttpSession session = request.getSession();
         Integer uid = (Integer) session.getAttribute("uid");
         UserLike userLike = new UserLike(uid, id);
-        if (postService.likeDialogs(userLike)) {
+        if (postService.likePost(userLike)) {
             Integer count = expInfoService.newExpInfo(new ExpInfo(uid, 1));
             return new R(1, count);
         }
@@ -97,7 +97,7 @@ public class PostController {
         Integer uid = (Integer) session.getAttribute("uid");
         post.setUid(uid);
         post.setUsername(username);
-        postService.createDialog(post);
+        postService.createPost(post);
         Integer count = expInfoService.newExpInfo(new ExpInfo(uid, 0));
         return new R(1, count);
     }

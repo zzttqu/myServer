@@ -12,7 +12,7 @@ public interface ExpInfoService {
     List<ExpCount> getAllExpNum(Integer uid);
 
     //查询该用户该项当日条数
-    Integer getExpNum(Integer uid, Integer cause);
+    Integer checkExpNum(Integer uid, Integer cause);
 
     //查询该用户当日总exp
 //    Integer getUserTodayExp(Integer uid);

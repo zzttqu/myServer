@@ -64,7 +64,7 @@ public class ExpInfoServiceImpl implements ExpInfoService {
     @Override
     public Integer newExpInfo(ExpInfo expInfo) {
         //得先查今天该项获得exp是否达到上限
-        Integer count = getExpNum(expInfo.getUid(), expInfo.getCause());
+        Integer count = checkExpNum(expInfo.getUid(), expInfo.getCause());
         //第一项是发帖，第二项是点赞，之后的再想吧
         int[] limit = new int[]{1, 4, 0, 0};
         for (int i = 0; i < limit.length; i++) {
@@ -74,7 +74,7 @@ public class ExpInfoServiceImpl implements ExpInfoService {
                 } else {
                     //这步才是写入数据
                     if (expInfoMapper.insert(expInfo) == 1) {
-//                        stringRedisTemplate.delete("count::SimpleKey [" + expInfo.getUid() + "," + expInfo.getCause() + "]");
+                        stringRedisTemplate.delete("count::SimpleKey [" + expInfo.getUid() + "," + expInfo.getCause() + "]");
 //                        stringRedisTemplate.delete("exp::" + expInfo.getUid());
                         return count + 1;
                     } else {
@@ -115,7 +115,7 @@ public class ExpInfoServiceImpl implements ExpInfoService {
     //我觉得可以用缓存，毕竟老得查
     @Cacheable(value = "count")
     @Override
-    public Integer getExpNum(Integer uid, Integer cause) {
+    public Integer checkExpNum(Integer uid, Integer cause) {
         Integer count = expInfoMapper.singleExp(uid, cause);
         return count;
     }

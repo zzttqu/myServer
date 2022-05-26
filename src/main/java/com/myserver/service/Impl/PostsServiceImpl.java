@@ -45,14 +45,13 @@ public class PostsServiceImpl implements PostService {
      * @return 返回点赞是否是第一次，第一次返回true
      */
     @Override
-    public Boolean likeDialogs(UserLike userLike) {
+    public Boolean likePost(UserLike userLike) {
         UserLike sqlLike = userLikeMapper.selectOne(new QueryWrapper<UserLike>().eq("dialog_id", userLike.getDialog_id()).eq("uid", userLike.getUid()));
         if (sqlLike != null) {
             if (sqlLike.getStatus() == 0) {
                 userLikeMapper.unlike(userLike.getUid(), userLike.getDialog_id());
                 return false;
-            }
-            else if (sqlLike.getStatus() == 1) {
+            } else if (sqlLike.getStatus() == 1) {
                 userLikeMapper.like(userLike.getDialog_id(), userLike.getUid());
                 return false;
             }
@@ -60,8 +59,7 @@ public class PostsServiceImpl implements PostService {
             else {
                 return true;
             }
-        }
-        else {
+        } else {
             userLikeMapper.insert(userLike);
             return true;
         }
@@ -76,7 +74,7 @@ public class PostsServiceImpl implements PostService {
      * @return 返回是否创建成功dialog
      */
     @Override
-    public Boolean createDialog(Post post) {
+    public Boolean createPost(Post post) {
         //设置默认状态为标准
         post.setStatus(0);
         post.setLikes(0);
@@ -90,14 +88,11 @@ public class PostsServiceImpl implements PostService {
      * @return 返回部分dialog
      */
     @Override
-    public List<Post> getDialogs(Integer num) {
-
+    public List<Post> getPosts(Integer num) {
         List<Post> dialogs = postsMapper.selectByPage(num);
-        for (Post d : dialogs) {
-            String[] imgIds = d.getImg().split(",");
-            for (String s : imgIds) {
-                d.setImg(imgInfoMapper.selectById(Integer.parseInt(s)).getPath());
-            }
+        for (Post p : dialogs) {
+            String[] imgIds = p.getImg().split(",");
+            p.setImg(imgInfoMapper.selectById(Integer.parseInt(imgIds[0])).getPath());
         }
         return dialogs;
     }
