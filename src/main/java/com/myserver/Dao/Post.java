@@ -24,18 +24,19 @@ public class Post {
      */
     private Integer uid;
     /**
-     * 创建该post的用户的用户名
+     * 创建该post的标题
      */
-    private String username;
+    private String title;
     /**
      * 该post的文字内容
      */
     private String text;
     /**
      * 该post的图片内容
-     * 内容为图片地址的json数组
+     * 会从别的地方存过来
      */
-    private String img;
+    @TableField(exist = false)
+    private Object img;
     /**
      * 该post的当前状态
      * 0为标准

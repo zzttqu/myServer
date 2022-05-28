@@ -1,13 +1,16 @@
 package com.myserver.service.Impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.myserver.Dao.ImgInfo;
+import com.myserver.Dao.Login;
 import com.myserver.Dao.Post;
 import com.myserver.Mapper.PostsMapper;
 import com.myserver.Mapper.ImgInfoMapper;
 import com.myserver.Mapper.UserLikeMapper;
 import com.myserver.Dao.UserLike;
 import com.myserver.service.PostService;
+import lombok.Data;
 import net.coobird.thumbnailator.Thumbnails;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -88,13 +91,23 @@ public class PostsServiceImpl implements PostService {
      * @return 返回部分dialog
      */
     @Override
-    public List<Post> getPosts(Integer num) {
-        List<Post> dialogs = postsMapper.selectByPage(num);
-        for (Post p : dialogs) {
-            String[] imgIds = p.getImg().split(",");
-            p.setImg(imgInfoMapper.selectById(Integer.parseInt(imgIds[0])).getPath());
+    public List<Post> getGeneralPosts(Integer num) {
+        List<Post> posts = postsMapper.selectByPage(num);
+        return posts;
+    }
+
+    @Override
+    public List<Post> getImgPosts(Integer num) {
+        Page<Post> page = new Page<>(num, 10);
+        QueryWrapper<Post> queryWrapper = new QueryWrapper<>();
+        queryWrapper.select("id", "title", "status", "category").eq("category", 2);
+        queryWrapper.orderByDesc("dateTime");
+        List<Post> imgPosts = postsMapper.selectPage(page, queryWrapper).getRecords();
+        for (Post p : imgPosts) {
+            List<ImgInfo> imgInfos = imgInfoMapper.selectList(new QueryWrapper<ImgInfo>().select().eq("postID", p.getId()));
+            p.setImg(imgInfos);
         }
-        return dialogs;
+        return imgPosts;
     }
 
     @Override

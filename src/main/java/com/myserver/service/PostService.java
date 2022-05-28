@@ -8,9 +8,11 @@ import java.io.IOException;
 import java.util.List;
 
 public interface PostService {
-    List<Post> getPosts(Integer num);
+    List<Post> getGeneralPosts(Integer num);
 
     Boolean likePost(UserLike userLike);
+
+    List<Post> getImgPosts(Integer num);
 
     Boolean createPost(Post post);
 

@@ -55,7 +55,7 @@ public class PostController {
                 return new R(1, 0);
             }
         }
-        return new R(1, postService.getPosts(number));
+        return new R(1, postService.getImgPosts(number));
     }
 
     /**
@@ -96,7 +96,7 @@ public class PostController {
         }
         Integer uid = (Integer) session.getAttribute("uid");
         post.setUid(uid);
-        post.setUsername(username);
+        post.setTitle(username);
         postService.createPost(post);
         Integer count = expInfoService.newExpInfo(new ExpInfo(uid, 0));
         return new R(1, count);

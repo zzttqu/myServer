@@ -20,8 +20,8 @@ public interface UserLikeMapper extends BaseMapper<UserLike> {
     //这个是每隔一段时间更新一次posts的likes数量
     //如果status为0计数，否则不计数
     @Update("UPDATE posts INNER JOIN " +
-            "(SELECT id,count(`status`=0 or null) as count FROM userlike GROUP BY id ) " +
-            "c on posts.id=c.id SET posts.likes=c.count")
+            "(SELECT post_id,count(`status`=0 or null) as count FROM userlike GROUP BY post_id ) " +
+            "c on posts.id=c.post_id SET posts.likes=c.count")
     Boolean updatePostLike();
     @Update("update userlike set status=0 where uid=#{uid} and id=#{id}")
     Integer like(Integer id,Integer uid);
