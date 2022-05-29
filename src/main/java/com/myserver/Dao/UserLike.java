@@ -1,12 +1,12 @@
 package com.myserver.Dao;
 
 import com.baomidou.mybatisplus.annotation.*;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 
 /**
  * 类型：Dao
@@ -17,7 +17,8 @@ import java.util.Date;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@TableName("userlike")
+@TableName(value = "userlike")
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class UserLike {
     /**
      * id
@@ -31,7 +32,7 @@ public class UserLike {
     /**
      * 被点赞对话id
      */
-    private Integer dialog_id;
+    private Integer post_id;
     /**
      * 点赞时间
      */
@@ -49,10 +50,10 @@ public class UserLike {
      * 构造的时候只需要这俩就行了
      *
      * @param uid       用户uid从session中获取
-     * @param dialog_id 从前端传回来
+     * @param post_id 从前端传回来
      */
-    public UserLike(Integer uid, Integer dialog_id) {
+    public UserLike(Integer uid, Integer post_id) {
         this.uid = uid;
-        this.dialog_id = dialog_id;
+        this.post_id = post_id;
     }
 }

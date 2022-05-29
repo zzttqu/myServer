@@ -3,14 +3,12 @@ package com.myserver.service.Impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.myserver.Dao.ImgInfo;
-import com.myserver.Dao.Login;
 import com.myserver.Dao.Post;
 import com.myserver.Mapper.PostsMapper;
 import com.myserver.Mapper.ImgInfoMapper;
 import com.myserver.Mapper.UserLikeMapper;
 import com.myserver.Dao.UserLike;
 import com.myserver.service.PostService;
-import lombok.Data;
 import net.coobird.thumbnailator.Thumbnails;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -49,13 +47,13 @@ public class PostsServiceImpl implements PostService {
      */
     @Override
     public Boolean likePost(UserLike userLike) {
-        UserLike sqlLike = userLikeMapper.selectOne(new QueryWrapper<UserLike>().eq("dialog_id", userLike.getDialog_id()).eq("uid", userLike.getUid()));
+        UserLike sqlLike = userLikeMapper.selectOne(new QueryWrapper<UserLike>().eq("post_id", userLike.getPost_id()).eq("uid", userLike.getUid()));
         if (sqlLike != null) {
             if (sqlLike.getStatus() == 0) {
-                userLikeMapper.unlike(userLike.getUid(), userLike.getDialog_id());
+                userLikeMapper.unlike(userLike.getUid(), userLike.getPost_id());
                 return false;
             } else if (sqlLike.getStatus() == 1) {
-                userLikeMapper.like(userLike.getDialog_id(), userLike.getUid());
+                userLikeMapper.like(userLike.getPost_id(), userLike.getUid());
                 return false;
             }
             //这种情况是不存在的，只是为了防止报错

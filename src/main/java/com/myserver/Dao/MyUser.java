@@ -1,6 +1,7 @@
 package com.myserver.Dao;
 
 import com.baomidou.mybatisplus.annotation.*;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -14,6 +15,7 @@ import java.util.List;
  */
 @Data
 @TableName(value = "user")
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class MyUser {
     /**
      * 用户的uid

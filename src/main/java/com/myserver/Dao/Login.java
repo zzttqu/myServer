@@ -1,6 +1,7 @@
 package com.myserver.Dao;
 
 import com.baomidou.mybatisplus.annotation.*;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,8 +16,7 @@ import java.time.LocalDateTime;
  */
 @Data
 @TableName(value = "login")
-@AllArgsConstructor
-@NoArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class Login {
     /**
      * 登录信息id

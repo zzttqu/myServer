@@ -1,6 +1,7 @@
 package com.myserver.Dao;
 
 import com.baomidou.mybatisplus.annotation.*;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -13,6 +14,7 @@ import java.time.LocalDateTime;
  */
 @Data
 @TableName(value = "posts")
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class Post {
     /**
      * post的id

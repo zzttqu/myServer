@@ -18,13 +18,13 @@ public class LikeService {
 
 
 
-//    public void likes(Integer uid, Integer dialog_id) {
-//        String likedKey = RedisKeyUtils.getLikedId(uid, dialog_id);
+//    public void likes(Integer uid, Integer post_id) {
+//        String likedKey = RedisKeyUtils.getLikedId(uid, post_id);
 //        redisTemplate.opsForHash().put(RedisKeyUtils.MAP_KEY_USER_LIKED, likedKey, "1");
 //    }
 //
-//    public void unLikes(Integer uid, Integer dialog_id) {
-//        String likedKey = RedisKeyUtils.getLikedId(uid, dialog_id);
+//    public void unLikes(Integer uid, Integer post_id) {
+//        String likedKey = RedisKeyUtils.getLikedId(uid, post_id);
 //        redisTemplate.opsForHash().delete(RedisKeyUtils.MAP_KEY_USER_LIKED, likedKey);
 //        redisTemplate.opsForHash().delete(RedisKeyUtils.MAP_KEY_USER_LIKED, likedKey);
 //    }
