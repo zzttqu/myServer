@@ -9,15 +9,17 @@ import com.myserver.utils.IpGetter;
 import com.myserver.utils.R;
 import com.myserver.Dao.UserLike;
 import com.myserver.service.PostService;
+import com.myserver.utils.TencentCosUtil;
+import com.tencent.cloud.Response;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -31,10 +33,12 @@ import java.util.List;
 @RestController
 @RequestMapping("/post")
 public class PostController {
-    @Autowired
+    @Resource
     private PostService postService;
-    @Autowired
+    @Resource
     private ExpInfoService expInfoService;
+
+    private final TencentCosUtil tencentCosUtil = new TencentCosUtil();
 
 
     /**
@@ -46,7 +50,7 @@ public class PostController {
      */
     @AccessLimit(maxCount = 10, seconds = 60)
     @GetMapping
-    public R getDialogs(Integer number, HttpServletRequest request) {
+    public R getDialogs(Integer number, @NonNull Integer type, HttpServletRequest request) {
         String ip = IpGetter.getRemoteHost(request);
         Integer uid = (Integer) request.getSession().getAttribute("uid");
         if (uid == null) {
@@ -55,7 +59,13 @@ public class PostController {
                 return new R(1, 0);
             }
         }
-        return new R(1, postService.getImgPosts(number));
+        if (type == 1) {
+            return new R(1, postService.getImgPosts(number));
+        } else if (type == 2) {
+            return new R(1, postService.getGeneralPosts(number));
+        }
+        return new R(0, 0);
+
     }
 
     /**
@@ -73,8 +83,7 @@ public class PostController {
         if (postService.likePost(userLike)) {
             Integer count = expInfoService.newExpInfo(new ExpInfo(uid, 1));
             return new R(1, count);
-        }
-        else {
+        } else {
             return new R(1, 0);
         }
     }
@@ -82,7 +91,7 @@ public class PostController {
     /**
      * 创建dialog
      *
-     * @param post  Dialog对象{@link Post}
+     * @param post    Dialog对象{@link Post}
      * @param request 需要session中的uid和username
      * @return 发帖返回此次点赞获得的exp，未登录返回失败
      * @see Post
@@ -90,44 +99,23 @@ public class PostController {
     @PostMapping("/create")
     public R createNewDialogs(@RequestBody Post post, HttpServletRequest request) {
         HttpSession session = request.getSession();
-        String username = (String) session.getAttribute("username");
-        if (username == null) {
-            return new R(0, 0);
-        }
         Integer uid = (Integer) session.getAttribute("uid");
+//        if (uid == null) {
+//            return new R(0, 0);
+//        }
         post.setUid(uid);
-        post.setTitle(username);
         postService.createPost(post);
         Integer count = expInfoService.newExpInfo(new ExpInfo(uid, 0));
         return new R(1, count);
     }
 
-    /**
-     * 上传的图片进行处理，压缩并生成uuid的地址
-     *
-     * @param files 文件
-     * @return 成功就返回上传图片的字符串
-     */
-    @PostMapping("/img")
-    public R uploadImg(@RequestParam("file") MultipartFile[] files) {
-        List<Integer> imgList = new ArrayList<>();
-        if (files.length == 0) {
-            return new R(0, "empty");
-        }
-        for (MultipartFile multipartFile : files) {
-
-            if (!multipartFile.isEmpty()) {
-                try {
-                    imgList.add(postService.createImage(multipartFile));
-                } catch (Exception e) {
-                    return new R(0, "error");
-                }
-            }
-            else {
-                return new R(0, "empty");
-            }
-        }
-        //这里传回去对应的图片id
-        return new R(1, imgList);
+    @AccessLimit(seconds = 10, maxCount = 50)
+    @PostMapping("/imgkey")
+    public R getUploadKey(HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        Integer uid = (Integer) session.getAttribute("uid");
+        Response response = tencentCosUtil.cosGen();
+        return new R(1, response);
     }
+
 }

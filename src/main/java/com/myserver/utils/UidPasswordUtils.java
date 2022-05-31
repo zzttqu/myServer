@@ -35,6 +35,10 @@ public class UidPasswordUtils implements ApplicationRunner {
         for (UserKey item : userKeys) {
             newUserKeys.add(new UserKey(item.getUid(), DigestUtils.sha256Hex(item.getUid() + item.getPassword())));
         }
+        if (userKeys.size()==0){
+            log.info("=============无用户=============");
+            return;
+        }
         if (utilsMapper.updateAllUserKey(newUserKeys)) {
             log.info("=============已完成用户Key生成工作=============");
         }

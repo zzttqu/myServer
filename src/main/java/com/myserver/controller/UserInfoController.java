@@ -1,5 +1,6 @@
 package com.myserver.controller;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.myserver.Dao.ExpCount;
 import com.myserver.Dto.UserInfoChangeDto;
 import com.myserver.service.ExpInfoService;
@@ -7,8 +8,11 @@ import com.myserver.service.RegisterService;
 import com.myserver.service.SignInService;
 import com.myserver.service.UserService;
 import com.myserver.utils.R;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.serializer.Serializer;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -116,9 +120,16 @@ public class UserInfoController {
         Integer exp = expInfoService.getUserTotalExp(uid);
         List<ExpCount> allExpNum = expInfoService.getAllExpNum(uid);
         if ((exp == null) || (exp == -1)) {
-            return new R(1, new R(0, allExpNum));
+            return new R(1, new expInfo(0, allExpNum));
         } else {
-            return new R(1, new R(exp, allExpNum));
+            return new R(1, new expInfo(exp, allExpNum));
         }
     }
+}
+@Data
+@AllArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)
+class expInfo {
+    private Integer exp;
+    private List<ExpCount> count;
 }

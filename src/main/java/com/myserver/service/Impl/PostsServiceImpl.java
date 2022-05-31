@@ -9,15 +9,11 @@ import com.myserver.Mapper.ImgInfoMapper;
 import com.myserver.Mapper.UserLikeMapper;
 import com.myserver.Dao.UserLike;
 import com.myserver.service.PostService;
-import net.coobird.thumbnailator.Thumbnails;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
-import java.io.*;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * 类型：Service
@@ -36,8 +32,8 @@ public class PostsServiceImpl implements PostService {
     private UserLikeMapper userLikeMapper;
     @Resource
     private ImgInfoMapper imgInfoMapper;
-    @Value("${file.uploadFolder}")
-    private String uploadFolder;
+//    @Value("${file.uploadFolder}")
+//    private String uploadFolder;
 
     /**
      * 点赞操作调用了{@link UserLikeMapper}
@@ -76,10 +72,21 @@ public class PostsServiceImpl implements PostService {
      */
     @Override
     public Boolean createPost(Post post) {
-        //设置默认状态为标准
         post.setStatus(0);
         post.setLikes(0);
-        return postsMapper.insert(post) == 1;
+        if (post.getImg() == null) {
+            post.setCategory(1);
+            return postsMapper.insert(post) == 1;
+        } else {
+            post.setCategory(2);
+            postsMapper.insert(post);
+            List<ImgInfo> imgLists = post.getImg();
+            for (ImgInfo img : imgLists) {
+                imgInfoMapper.insert(new ImgInfo(post.getId(), img.getThumb(), img.getRaw()));
+            }
+        }
+        return true;
+        //设置默认状态为标准
     }
 
     /**
@@ -90,47 +97,51 @@ public class PostsServiceImpl implements PostService {
      */
     @Override
     public List<Post> getGeneralPosts(Integer num) {
-        List<Post> posts = postsMapper.selectByPage(num);
-        return posts;
+        Page<Post> page = new Page<>(num, 10);
+        QueryWrapper<Post> queryWrapper = new QueryWrapper<>();
+        queryWrapper.select("id", "title", "text", "status", "category").eq("category", 1);
+        queryWrapper.orderByDesc("dateTime");
+        List<Post> generalPosts = postsMapper.selectPage(page, queryWrapper).getRecords();
+        return generalPosts;
     }
 
     @Override
     public List<Post> getImgPosts(Integer num) {
         Page<Post> page = new Page<>(num, 10);
         QueryWrapper<Post> queryWrapper = new QueryWrapper<>();
-        queryWrapper.select("id", "title", "status", "category").eq("category", 2);
+        queryWrapper.select("id", "title", "text", "status", "category").eq("category", 2);
         queryWrapper.orderByDesc("dateTime");
         List<Post> imgPosts = postsMapper.selectPage(page, queryWrapper).getRecords();
         for (Post p : imgPosts) {
-            List<ImgInfo> imgInfos = imgInfoMapper.selectList(new QueryWrapper<ImgInfo>().select().eq("postID", p.getId()));
-            p.setImg(imgInfos);
+            List<ImgInfo> imgInfos = imgInfoMapper.selectList(new QueryWrapper<ImgInfo>().select("thumb", "raw").eq("postID", p.getId()));
+            p.setImg(imgInfos.subList(0,1));
         }
         return imgPosts;
     }
-
-    @Override
-    public Integer createImage(MultipartFile img) throws IOException {
-        byte[] raw = img.getBytes();
-        ByteArrayInputStream in = new ByteArrayInputStream(raw);
-        String suffix = img.getOriginalFilename().substring(img.getOriginalFilename().lastIndexOf(".") + 1);
-        String fileName = UUID.randomUUID() + "." + suffix;
-        String rawFileName = "raw_" + fileName;
-        String thumbFileName = "thumb_" + fileName;
-        File file = new File(uploadFolder + "img\\imgs\\raw\\" + rawFileName);
-        FileOutputStream fos = new FileOutputStream(file);
-        fos.write(raw);
-        fos.close();
-        Thumbnails.of(in)
-                .size(400, 400)
-                .outputQuality(0.8)
-                .toFile(uploadFolder + "img\\imgs\\raw\\" + thumbFileName);
+//    @Override
+//    public Boolean createImage(List<ImgInfoDto> imgInfos) {
+//        byte[] raw = img.getBytes();
+//        ByteArrayInputStream in = new ByteArrayInputStream(raw);
+//        String suffix = img.getOriginalFilename().substring(img.getOriginalFilename().lastIndexOf(".") + 1);
+//        String fileName = UUID.randomUUID() + "." + suffix;
+//        String rawFileName = "raw_" + fileName;
+//        String thumbFileName = "thumb_" + fileName;
+//        File file = new File(uploadFolder + "img\\imgs\\raw\\" + rawFileName);
+//        FileOutputStream fos = new FileOutputStream(file);
+//        fos.write(raw);
+//        fos.close();
+//        Thumbnails.of(in)
+//                .size(400, 400)
+//                .outputQuality(0.8)
+//                .toFile(uploadFolder + "img\\imgs\\raw\\" + thumbFileName);
 //                .asBufferedImage();
 //        ByteArrayOutputStream out = new ByteArrayOutputStream();
 //        ImageIO.write(thumbBufferedImage, "jpg", out);
 //        byte[] thumb = out.toByteArray();
-        ImgInfo imgInfo = new ImgInfo();
-        imgInfo.setPath(fileName);
-        imgInfoMapper.insert(imgInfo);
-        return imgInfo.getId();
-    }
+//
+//        for (ImgInfoDto img : imgInfos) {
+//            imgInfoMapper.insert(new ImgInfo(img.getRaw(), img.getThumb()));
+//        }
+//        return true;
+//    }
 }

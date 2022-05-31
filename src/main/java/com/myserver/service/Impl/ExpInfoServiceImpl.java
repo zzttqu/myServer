@@ -99,14 +99,19 @@ public class ExpInfoServiceImpl implements ExpInfoService {
         List<ExpCount> expCountList = expInfoMapper.expList(uid);
         expCountList.sort(Comparator.comparing(ExpCount::getCause));
         List<ExpCount> list = new ArrayList<>();
+        int count = 0;
         //这里是有几种cause
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < expCountList.size(); i++) {
+            count++;
             ExpCount countDto = expCountList.get(i);
             if (countDto == null) {
                 list.add(new ExpCount(i, 0));
             } else if (countDto.getCause() == i) {
                 list.add(new ExpCount(i, countDto.getCause()));
             }
+        }
+        for (int i = count; i < 2; i++) {
+            list.add(new ExpCount(i, 0));
         }
         return list;
     }

@@ -27,7 +27,7 @@ public class ScheduleTask {
     private UidPasswordUtils uidPasswordUtils;
 
     //每30s执行一次
-    @Scheduled(cron = "0/30 * * * * ? ")
+//    @Scheduled(cron = "0/30 * * * * ? ")
     private void updateDialogLikes() {
         if (userLikeMapper.updatePostLike()) {
         }

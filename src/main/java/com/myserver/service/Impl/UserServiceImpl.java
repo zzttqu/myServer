@@ -58,6 +58,12 @@ public class UserServiceImpl implements UserService {
                     null, 0, null);
         }
         Avatar avatar = avatarMapper.selectById(myUser.getAvatar());
+        if (avatar == null) {
+            return new UserInfoDto(
+                    myUser.getUsername(),
+                    myUser.getUid(),
+                    userLikeMapper.getUserLikeByUid(myUser.getUid()), myUser.getStatus(), null);
+        }
         String base64str = Base64Img.encode(avatar.getAvatar());
         return new UserInfoDto(
                 myUser.getUsername(),
@@ -112,7 +118,8 @@ public class UserServiceImpl implements UserService {
         String rawPassword;
         try {
             rawPassword = decrypt(userKey);
-        } catch (NoSuchPaddingException | NoSuchAlgorithmException | InvalidAlgorithmParameterException | InvalidKeyException | IllegalBlockSizeException | BadPaddingException e) {
+        } catch (NoSuchPaddingException | NoSuchAlgorithmException | InvalidAlgorithmParameterException |
+                 InvalidKeyException | IllegalBlockSizeException | BadPaddingException e) {
             e.printStackTrace();
             return false;
         }
@@ -145,8 +152,7 @@ public class UserServiceImpl implements UserService {
             LocalDateTime d2 = list.get(1).getDateTime();
 //            return d2.isBefore(d1);
             return false;
-        }
-        else {
+        } else {
             return false;
         }
 

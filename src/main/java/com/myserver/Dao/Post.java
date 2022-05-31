@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * 类型：Dao
@@ -38,7 +39,7 @@ public class Post {
      * 会从别的地方存过来
      */
     @TableField(exist = false)
-    private Object img;
+    private List<ImgInfo> img;
     /**
      * 该post的当前状态
      * 0为标准

@@ -55,7 +55,6 @@ public class RegisterServiceImpl implements RegisterService {
             e.printStackTrace();
             return false;
         }
-        myUser.setAvatar(1);
         if (myUserMapper.insert(myUser) == 1) {
             if (utilsMapper.updateOneUserKey(DigestUtils.sha256Hex(myUser.getUid() + myUser.getRawPassword()), myUser.getUid())) {
 //                stringRedisTemplate.delete("usernameNum::" + myUser.getUsername());
