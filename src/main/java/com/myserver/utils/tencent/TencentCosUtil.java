@@ -17,11 +17,11 @@ public class TencentCosUtil {
     //API密钥secretKey
     private static final String secretKey = "IL8gxzFI8j6GAoDQSJxPbYJtEMIzSgfR";
 
-    //存储桶所属地域
-    private final String region = "存储桶所属地域";
-
-    //存储桶空间名称
-    private final String bucketName = "存储桶空间名称";
+//    //存储桶所属地域
+//    private final String region = "存储桶所属地域";
+//
+//    //存储桶空间名称
+//    private final String bucketName = "存储桶空间名称";
 
     //存储桶访问域名
     private String url;

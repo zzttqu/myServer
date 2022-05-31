@@ -32,7 +32,6 @@ build/
 ### VS Code ###
 .vscode/
 /doc/
-/test/apache-jmeter-5.4.3/
 /**.log
 /redis.bat
 /redis-cli.bat
