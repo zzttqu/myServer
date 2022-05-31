@@ -3,7 +3,7 @@ target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
-!**/src/test/java/com/myserver/
+
 ### STS ###
 .apt_generated
 .classpath
@@ -36,3 +36,5 @@ build/
 /**.log
 /redis.bat
 /redis-cli.bat
+/src/main/java/com/myserver/utils/TencentCosUtil.java
+/src/test/java/com/myserver/
