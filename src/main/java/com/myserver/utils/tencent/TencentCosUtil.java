@@ -1,4 +1,4 @@
-package com.myserver.utils;
+package com.myserver.utils.tencent;
 
 import com.tencent.cloud.CosStsClient;
 import com.tencent.cloud.Response;

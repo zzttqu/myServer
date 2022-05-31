@@ -36,5 +36,5 @@ build/
 /**.log
 /redis.bat
 /redis-cli.bat
-/src/main/java/com/myserver/utils/TencentCosUtil.java
 /src/test/java/com/myserver/
+/src/main/java/com/myserver/utils/tencent/

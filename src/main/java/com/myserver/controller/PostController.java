@@ -9,10 +9,9 @@ import com.myserver.utils.IpGetter;
 import com.myserver.utils.R;
 import com.myserver.Dao.UserLike;
 import com.myserver.service.PostService;
-import com.myserver.utils.TencentCosUtil;
+import com.myserver.utils.tencent.TencentCosUtil;
 import com.tencent.cloud.Response;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,7 +19,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.util.List;
 
 /**
  * 类型：Controller
